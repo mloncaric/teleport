@@ -1,0 +1,13 @@
+{
+  "name": "teleport library",
+  "description": "teleport library",
+  "author": "Miran Loncaric",
+  "version": "0.0.0.1",
+  "packages": {
+    "streams": {},
+    "raven": {},
+	"connect": {},
+	"uri-js": {},
+	"momentjs": {}
+  }
+}

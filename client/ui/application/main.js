@@ -1,0 +1,1 @@
+applicationView = new Teleport.View("default_application");
