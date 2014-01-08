@@ -147,6 +147,8 @@ function updateUser(meteorUserId, data, process)
 		if(!data.apiKey)
 			delete data.apiKey;
 	}
+	else
+		delete data._id;
  	
 	var user = Users.findOne({id: data.id});
 	
@@ -161,10 +163,7 @@ function updateUser(meteorUserId, data, process)
 	
 	Users.update({id: data.id}, {$set: data});
 	
-	var result = _.extend(user, data);
-	delete result._id;
-	
-	return result;
+	return _.extend(user, data);
 }
 
 function updateSession(data, room)
