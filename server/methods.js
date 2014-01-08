@@ -161,7 +161,10 @@ function updateUser(meteorUserId, data, process)
 	
 	Users.update({id: data.id}, {$set: data});
 	
-	return _.extend(user, data);
+	var result = _.extend(user, data);
+	delete result._id;
+	
+	return result;
 }
 
 function updateSession(data, room)
