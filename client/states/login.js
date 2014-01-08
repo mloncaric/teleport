@@ -4,8 +4,6 @@ login = function()
 	
 	if(definedStates.login)
 		states.push(definedStates.login);
-	else
-		Teleport.context.guestName = "Guest";
 	
 	states.push(loggingIn);
 	
@@ -18,7 +16,7 @@ function fetchUser(state)
 	
 	if(context.user)
 	{
-		state.resolve();
+		state.resolve({fetchUserSkipped: true});
 		
 		return;
 	}
@@ -32,7 +30,7 @@ function fetchUser(state)
 		else
 		{
 			if(result)
-				state.resolve(result);
+				state.resolve({user: result});
 			else
 				state.resolve();
 		}
@@ -43,25 +41,23 @@ function loggingIn(state)
 {
 	var context = Teleport.context;
 	
-	if(!context.guestName && !context.pendingUser)
-	{
-		state.resolve();
-		
-		return;
-	}
-	
 	Teleport.setView(definedViews.loading);
 	
-	if(context.guestName)
-		Teleport.call("loginGuest", context.guestName, function(error, result)
-		{
-			if(error || !result)
-				state.reject(error);
-			else
-				state.resolve({user: result});
-		});
+	if(context.user)
+	{
+		if(!context.fetchUserSkipped)
+			Teleport.call("loginUser", context.user, function(error, result)
+			{
+				if(error || !result)
+					state.reject(error);
+				else
+					state.resolve({user: result});
+			});
+		else
+			state.resolve();
+	}
 	else
-		Teleport.call("loginUser", context.pendingUser, function(error, result)
+		Teleport.call("loginGuest", context.guestName || "Guest", function(error, result)
 		{
 			if(error || !result)
 				state.reject(error);

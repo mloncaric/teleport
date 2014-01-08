@@ -10,13 +10,17 @@ Teleport.methods(
 
 function fetchUser(authToken)
 {
-	var pendingUser = authToken
-		? Teleport.http(null, "GET", Teleport.link("auth/session", {sessionid: authToken}))
-		: null;
+	if(authToken)
+	{
+		var data = Teleport.http(null, "GET", Teleport.link("auth/session", {sessionid: authToken}));
+		
+		if(data)
+			return updateUser(this.meteorUserId, data, true);
+		
+		return null;
+	}
 	
-	return	{ pendingUser: pendingUser
-			, user: this.user
-			};
+	return this.user;
 }
 
 function loginUser(data)
@@ -37,7 +41,7 @@ function loginGuest(name)
 	if(!data)
 		return null;
 	
-	return updateUser(this.meteorUserId, data);
+	return updateUser(this.meteorUserId, data, true);
 }
 
 function createSession(startDate)
@@ -66,7 +70,7 @@ function fetchSession()
 	if(!data)
 		return null;
 	
-	updateUser(data.owner.id, data.owner);
+	updateUser(data.owner.id, data.owner, true);
 	
 	var session = updateSession(data, this.roomId),
 		room = this.room;
@@ -127,19 +131,22 @@ function createUser(guestName)
 	return _.extend(data, {name: guestName, avatar: "/default-avatar.png", is_anonymous: true});
 }
 
-function updateUser(meteorUserId, data)
+function updateUser(meteorUserId, data, process)
 {
-	data =
-	{ id: data.id
-	, username: data.username
-	, apiKey: data.api_key
-	, name: data.name
-	, avatar: data.avatar || data.avatar_url
-	, anonymous: data.is_anonymous
-	};
-	
-	if(!data.apiKey)
-		delete data.apiKey;
+	if(process)
+	{
+		data =
+		{ id: data.id
+		, username: data.username
+		, apiKey: data.api_key
+		, name: data.name
+		, avatar: data.avatar || data.avatar_url
+		, anonymous: data.is_anonymous
+		};
+		
+		if(!data.apiKey)
+			delete data.apiKey;
+	}
  	
 	var user = Users.findOne({id: data.id});
 	
