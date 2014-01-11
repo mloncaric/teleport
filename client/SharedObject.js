@@ -1,3 +1,6 @@
+// TODO: Hook with Teleport.View - events should fire only when view is visible
+// Get rid of Session dependencies
+
 Teleport.SharedObject = function(name)
 {
 	if(!name)
