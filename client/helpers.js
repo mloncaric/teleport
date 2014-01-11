@@ -18,3 +18,8 @@ Handlebars.registerHelper("room", function()
 {
 	return Teleport.context.room;
 });
+
+Handlebars.registerHelper("user", function()
+{
+	return Teleport.user(true);
+});
