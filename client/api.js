@@ -37,7 +37,7 @@ Teleport.setRoom = function(value)
 
 function prepareUser()
 {
-	return Users.findOne({id: Meteor.user().profile});
+	return Users.findOne({id: Meteor.user().profile}) || Teleport.context.user;
 }
 
 function prepareOnlineUsers()
