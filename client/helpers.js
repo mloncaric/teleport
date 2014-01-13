@@ -23,3 +23,8 @@ Handlebars.registerHelper("user", function()
 {
 	return Teleport.user(true);
 });
+
+Handlebars.registerHelper("session", function()
+{
+	return Teleport.session(true);
+});

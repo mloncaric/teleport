@@ -14,8 +14,7 @@ Teleport.setView = function(view)
 		if(view.template == currentView.template)
 			return;
 		
-		currentView.hide && currentView.hide();
-		currentView.visible = false;
+		currentView.hide();
 	}
 	
 	currentView = view;

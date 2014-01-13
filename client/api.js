@@ -42,10 +42,10 @@ function prepareUser()
 
 function prepareOnlineUsers()
 {
-	return _.map
-	( OnlineUsers.find().fetch()
-	, function(user) { return _.extend(user, Users.findOne({id: user.id})); }
-	);
+	return OnlineUsers.find().map(function(user)
+	{
+		return _.extend(user, Users.findOne({id: user.id}));
+	});
 }
 
 var sessions = {};
