@@ -1,23 +1,23 @@
 Teleport.View = function(template, options)
 {
 	this.template = template;
-	this.options = options;
+	this.options = options || {};
 	
-	this.context = _.omit(options, ["reactive", "events", "helpers", "data", "init", "show", "hide"]);
+	this.context = _.omit(this.options, ["reactive", "events", "helpers", "data", "init", "show", "hide"]);
 	
 	this.visible = false;
 	
-	if(options.events)
-		Template[template].events(options.events);
+	if(this.options.events)
+		Template[template].events(this.options.events);
 	
-	if(options.helpers)
-		Template[template].helpers(options.helpers);
+	if(this.options.helpers)
+		Template[template].helpers(this.options.helpers);
 	
-	if(options.data)
-		_.extend(Template[template], options.data);
+	if(this.options.data)
+		_.extend(Template[template], this.options.data);
 	
-	if(_.isFunction(options.init))
-		options.init.call(this.context);
+	if(_.isFunction(this.options.init))
+		this.options.init.call(this.context);
 	
 	Template[template].rendered = _.bind(this.show, this);
 	Template[template].destroyed = _.bind(this.hide, this);
