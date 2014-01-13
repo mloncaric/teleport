@@ -3,7 +3,7 @@ Teleport.View = function(template, options)
 	this.template = template;
 	this.options = options || {};
 	
-	this.context = _.omit(this.options, ["reactive", "events", "helpers", "data", "init", "show", "hide"]);
+	this.context = _.omit(this.options, ["subscriptions", "sharedObjects", "events", "helpers", "data", "init", "show", "hide"]);
 	
 	this.visible = false;
 	
@@ -30,8 +30,20 @@ Teleport.View.prototype.show = function()
 	
 	this.visible = true;
 	
-	if(_.isFunction(this.options.reactive))
-		this.computation = Deps.autorun(_.bind(this.options.reactive, this));
+	if(_.isFunction(this.options.subscriptions))
+		this.subscriptionsComputation = Deps.autorun(_.bind(this.options.subscriptions, this));
+	
+	var sharedObjects = this.options.sharedObjects;
+	if(sharedObjects)
+	{
+		if(_.isFunction(sharedObjects))
+			this.options.sharedObjects = sharedObjects = sharedObjects.call(this.context);
+		
+		_.each(sharedObjects, function(sharedObject)
+		{
+			sharedObject.activate();
+		});
+	}
 	
 	if(_.isFunction(this.options.show))
 		this.options.show.call(this.context);
@@ -47,9 +59,14 @@ Teleport.View.prototype.hide = function()
 	if(_.isFunction(this.options.hide))
 		this.options.hide.call(this.context);
 	
-	if(this.computation)
+	if(this.subscriptionsComputation)
 	{
-		this.computation.stop();
-		this.computation = null;
+		this.subscriptionsComputation.stop();
+		this.subscriptionsComputation = null;
 	}
+	
+	_.each(this.options.sharedObjects, function(sharedObject)
+	{
+		sharedObject.deactivate();
+	});
 }

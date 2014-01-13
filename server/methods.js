@@ -6,6 +6,8 @@ Teleport.methods(
 , fetchSession: fetchSession
 , trackUser: trackUser
 , createSharedObject: createSharedObject
+, updateSharedObject: updateSharedObject
+, resetSharedObject: resetSharedObject
 });
 
 function fetchUser(authToken)
@@ -113,6 +115,32 @@ function createSharedObject(name)
 {
 	if(!SharedObjects.findOne({room: this.roomId, name: name}))
 		SharedObjects.insert({room: this.roomId, name: name, data: {}});
+	
+	return true;
+}
+
+function updateSharedObject(name, data)
+{
+	var sharedObject = SharedObjects.findOne({room: this.roomId, name: name});
+	
+	if(!sharedObject)
+		return false;
+	
+	SharedObjects.update({_id: sharedObject._id}, {$set: {data: data}});
+	
+	return true;
+}
+
+function resetSharedObject(name)
+{
+	var sharedObject = SharedObjects.findOne({room: this.roomId, name: name});
+	
+	if(!sharedObject)
+		return false;
+	
+	SharedObjects.update({_id: sharedObject._id}, {$set: {data: {}}});
+	
+	return true;
 }
 
 // Login
