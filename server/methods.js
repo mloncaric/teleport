@@ -114,7 +114,7 @@ function trackUser(clientId)
 function createSharedObject(name)
 {
 	if(!SharedObjects.findOne({room: this.roomId, name: name}))
-		SharedObjects.insert({room: this.roomId, name: name, data: {}});
+		SharedObjects.insert({room: this.roomId, name: name, data: "{}"});
 	
 	return true;
 }
@@ -126,7 +126,10 @@ function updateSharedObject(name, data)
 	if(!sharedObject)
 		return false;
 	
-	SharedObjects.update({_id: sharedObject._id}, {$set: flattenObject({data: data})});
+	SharedObjects.update
+	( {_id: sharedObject._id}
+	, {$set: {data: JSON.stringify($.extend(true, {}, sharedObject.data, data))}}
+	);
 	
 	return true;
 }
@@ -138,7 +141,7 @@ function resetSharedObject(name)
 	if(!sharedObject)
 		return false;
 	
-	SharedObjects.update({_id: sharedObject._id}, {$set: {data: {}}});
+	SharedObjects.update({_id: sharedObject._id}, {$set: {data: "{}"}});
 	
 	return true;
 }
@@ -225,32 +228,4 @@ function updateSession(data, room)
 	Sessions.update({id: data.id}, {$set: data});
 	
 	return _.extend(session, data);
-}
-
-function flattenObject(object)
-{
-	var result = {};
-	
-	for(var key in object)
-	{
-		if(!(key in object))
-			continue;
-		
-		if((typeof object[key]) == "object")
-		{
-			var flatObject = flattenObject(object[key]);
-			
-			for(var flatKey in flatObject)
-			{
-				if(!(flatKey in flatObject))
-					continue;
-				
-				result[key + "." + flatKey] = flatObject[flatKey];
-			}
-		}
-		else
-			result[key] = object[key];
-	}
-	
-	return result;
 }
