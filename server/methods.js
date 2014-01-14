@@ -130,7 +130,7 @@ function updateSharedObject(name, data)
 	
 	SharedObjects.update
 	( {_id: sharedObject._id}
-	, {$set: {data: JSON.stringify(extend(true, {}, sharedObject.data, data))}}
+	, {$set: {data: EJSON.stringify(extend(true, {}, sharedObject.data, data))}}
 	);
 	
 	return true;

@@ -42,7 +42,7 @@ Npm.depends({
 Package.on_use(function(api)
 {
 	api.use(["handlebars", "jquery", "templating"], ["client"]);
-	api.use(["underscore", "accounts-base", "deps", "streams", "raven", "uri-js", "momentjs"], ["client", "server"]);
+	api.use(["underscore", "accounts-base", "deps", "streams", "raven", "uri-js", "momentjs", "ejson"], ["client", "server"]);
 	api.use(["http", "webapp", "connect"], "server");
 	
 	api.add_files(iterate("packages/teleport/lib"), ["client", "server"]);
