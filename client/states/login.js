@@ -45,16 +45,13 @@ function loggingIn(state)
 	
 	if(context.user)
 	{
-		if(!context.fetchUserSkipped)
-			Teleport.call("loginUser", context.user, function(error, result)
-			{
-				if(error || !result)
-					state.reject(error);
-				else
-					state.resolve({user: result});
-			});
-		else
-			state.resolve();
+		Teleport.call("loginUser", context.user, function(error, result)
+		{
+			if(error || !result)
+				state.reject(error);
+			else
+				state.resolve({user: result});
+		});
 	}
 	else
 		Teleport.call("loginGuest", context.guestName || "Guest", function(error, result)
