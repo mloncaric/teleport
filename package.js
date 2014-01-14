@@ -35,14 +35,14 @@ Package.describe(
 { summary: "Teleport Library"
 });
 
-/*Npm.depends({
-  "object-sync": "0.1.1"
-});*/
+Npm.depends({
+  "extend": "1.2.1"
+});
 
 Package.on_use(function(api)
 {
-	api.use(["handlebars", "templating"], ["client"]);
-	api.use(["underscore", "jquery", "accounts-base", "deps", "streams", "raven", "uri-js", "momentjs"], ["client", "server"]);
+	api.use(["handlebars", "jquery", "templating"], ["client"]);
+	api.use(["underscore", "accounts-base", "deps", "streams", "raven", "uri-js", "momentjs"], ["client", "server"]);
 	api.use(["http", "webapp", "connect"], "server");
 	
 	api.add_files(iterate("packages/teleport/lib"), ["client", "server"]);

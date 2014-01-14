@@ -1,3 +1,5 @@
+var extend = Npm.require("extend");
+
 Teleport.methods(
 { fetchUser: fetchUser
 , loginUser: loginUser
@@ -128,7 +130,7 @@ function updateSharedObject(name, data)
 	
 	SharedObjects.update
 	( {_id: sharedObject._id}
-	, {$set: {data: JSON.stringify(jQuery.extend(true, {}, sharedObject.data, data))}}
+	, {$set: {data: JSON.stringify(extend(true, {}, sharedObject.data, data))}}
 	);
 	
 	return true;
