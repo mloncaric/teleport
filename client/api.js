@@ -37,7 +37,11 @@ Teleport.setRoom = function(value)
 
 function prepareUser()
 {
-	return Users.findOne({id: Meteor.user().profile}) || Teleport.context.user;
+	var user = Users.findOne({id: Meteor.user().profile});
+	if(user)
+		Teleport.context.user = user;
+	
+	return Teleport.context.user;
 }
 
 function prepareOnlineUsers()
@@ -48,18 +52,13 @@ function prepareOnlineUsers()
 	});
 }
 
-var sessions = {};
 function prepareSession()
 {
-	var room = Teleport.context.room;
+	var room = Teleport.context.room,
+		session = Sessions.findOne({room: room});
 	
-	if(room in sessions)
-		return sessions[room];
+	if(session)
+		Teleport.context.session = new Room(data);
 	
-	var data = Sessions.findOne({room: room});
-	
-	if(!data)
-		return null;
-	
-	return sessions[room] = new Room(data);
+	return Teleport.context.session;
 }
