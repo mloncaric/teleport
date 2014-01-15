@@ -1,6 +1,6 @@
 fetchSessionAndSubscribe = function(state)
 {
-	return Teleport.queue([fetchSession, subscriptions]);
+	return Teleport.queue([fetchSession, subscriptions, finalize]);
 }
 
 function fetchSession(state)
@@ -38,4 +38,12 @@ function subscriptions(state)
 	Meteor.subscribe("tport_sessions", ready);
 	Meteor.subscribe("onlineUsers", room, ready);
 	Meteor.subscribe("sharedObjects", room, ready);
+}
+
+function finalize(state)
+{
+	Teleport.user();
+	Teleport.session();
+	
+	state.resolve();
 }
