@@ -58,7 +58,7 @@ function prepareSession()
 		session = Sessions.findOne({room: room});
 	
 	if(session)
-		Teleport.context.session = new Room(data);
+		Teleport.context.session = new Room(session); // TODO: Move into transform method
 	
 	return Teleport.context.session;
 }
