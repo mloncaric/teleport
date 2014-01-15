@@ -1,6 +1,6 @@
 login = function()
 {
-	var states = [fetchUser];
+	var states = [fetchUser, updateUser];
 	
 	if(definedStates.login)
 		states.push(definedStates.login);
@@ -35,6 +35,13 @@ function fetchUser(state)
 				state.resolve();
 		}
 	});
+}
+
+function updateUser(state)
+{
+	Teleport.user();
+	
+	state.resolve();
 }
 
 function loggingIn(state)

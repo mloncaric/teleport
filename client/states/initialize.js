@@ -1,6 +1,6 @@
 initialize = function()
 {
-	var states = [loginAnonymously, subscriptions, finalize, processSession];
+	var states = [loginAnonymously, subscriptions, processSession];
 	
 	if(definedStates.initialize)
 		states.unshift(definedStates.initialize);
@@ -44,13 +44,6 @@ function subscriptions(state)
 	// TODO: Handle errors
 	Meteor.subscribe("tport_users", ready);
 	Meteor.subscribe("tport_sessions", ready);
-}
-
-function finalize(state)
-{
-	Teleport.user();
-	
-	state.resolve();
 }
 
 function processSession(state)
