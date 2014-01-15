@@ -14,6 +14,8 @@ Teleport.methods(
 
 function fetchUser(authToken)
 {
+	var currentUser = this.user;
+	
 	if(authToken)
 	{
 		var data = Teleport.http(null, "GET", Teleport.link("auth/session", {sessionid: authToken}));
@@ -21,10 +23,13 @@ function fetchUser(authToken)
 		if(data)
 			return updateUser(this.meteorUserId, data, true);
 		
-		return null;
+		return currentUser;
 	}
 	
-	return this.user;
+	if(currentUser && !currentUser.anonymous)
+		return null;
+	
+	return currentUser;
 }
 
 function loginUser(data)
