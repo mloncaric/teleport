@@ -6,7 +6,7 @@ Handlebars.registerHelper("outlet", function()
 	if(!(templateName in Template))
 		return;
 	
-	return new Handlebars.SafeString(Template[templateName]());
+	return new Handlebars.SafeString(Spark.isolate(Template[templateName]));
 });
 
 Handlebars.registerHelper("moment", function(value, format)
@@ -21,10 +21,10 @@ Handlebars.registerHelper("room", function()
 
 Handlebars.registerHelper("user", function()
 {
-	return Teleport.user(true);
+	return Teleport.user();
 });
 
 Handlebars.registerHelper("session", function()
 {
-	return Teleport.session(true);
+	return Teleport.session();
 });
