@@ -1,25 +1,30 @@
 Teleport.user = function(reactive)
 {
-	if(reactive)
-		return prepareUser();
+	var user = Users.findOne({id: Meteor.user().profile}, {reactive: reactive});
 	
-	return Deps.nonreactive(prepareUser);
+	if(user)
+		Teleport.context.user = user;
+	
+	return Teleport.context.user;
 }
 
 Teleport.onlineUsers = function(reactive)
 {
-	if(reactive)
-		return prepareOnlineUsers();
-	
-	return Deps.nonreactive(prepareOnlineUsers);
+	return OnlineUsers.find({}, {reactive: reactive}).map(function(user)
+	{
+		return _.extend(user, Users.findOne({id: user.id}, {reactive: reactive}));
+	});
 }
 
 Teleport.session = function(reactive)
 {
-	if(reactive)
-		return prepareSession();
+	var room = Teleport.context.room,
+		session = Sessions.findOne({room: room}, {reactive: reactive});
 	
-	return Deps.nonreactive(prepareSession);
+	if(session)
+		Teleport.context.session = new Room(session, reactive); // TODO: Move into transform method
+	
+	return Teleport.context.session;
 }
 
 Teleport.setRoom = function(value)
@@ -31,35 +36,4 @@ Teleport.setRoom = function(value)
 	}
 	
 	history.replaceState({}, document.title, location.origin + "/" + (value || ""));
-}
-
-// TODO: Optimize
-
-function prepareUser()
-{
-	var user = Users.findOne({id: Meteor.user().profile});
-	
-	if(user)
-		Teleport.context.user = user;
-	
-	return Teleport.context.user;
-}
-
-function prepareOnlineUsers()
-{
-	return OnlineUsers.find().map(function(user)
-	{
-		return _.extend(user, Users.findOne({id: user.id}));
-	});
-}
-
-function prepareSession()
-{
-	var room = Teleport.context.room,
-		session = Sessions.findOne({room: room});
-	
-	if(session)
-		Teleport.context.session = new Room(session); // TODO: Move into transform method
-	
-	return Teleport.context.session;
 }
