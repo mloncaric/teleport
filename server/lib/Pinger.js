@@ -100,7 +100,8 @@ pingStream.on("pong", function(data)
 	/*if(data.id != pinger.pingId)
 		return;*/
 	
-	pinger.users[this.userId].roundAverage(difference);
+	if(this.userId in pinger.users)
+		pinger.users[this.userId].roundAverage(difference);
 });
 
 // Permissions
