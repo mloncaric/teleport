@@ -30,7 +30,7 @@ function fetchUser(state)
 		else
 		{
 			if(result)
-				state.resolve({user: result});
+				state.resolve({fetchedUser: result});
 			else
 				state.resolve();
 		}
@@ -39,7 +39,22 @@ function fetchUser(state)
 
 function updateUser(state)
 {
-	Teleport.user();
+	if(!Teleport.context.fetchUserSkipped)
+	{
+		var currentUser = Teleport.user(),
+			fetchedUser = Teleport.context.fetchedUser;
+		
+		delete Teleport.context.fetchedUser;
+		
+		if(currentUser)
+		{
+			if(!fetchedUser && !currentUser.anonymous)
+				Teleport.context.user = null;
+		}
+		
+		if(fetchedUser)
+			Teleport.context.user = fetchedUser;
+	}
 	
 	state.resolve();
 }
