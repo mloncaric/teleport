@@ -22,7 +22,7 @@ function fetchSession(state)
 function subscriptions(state)
 {
 	var room = Teleport.context.room,
-		subscriptionsCount = 4,
+		subscriptionsCount = 2,
 		subscriptionsReady = 0;
 	
 	var ready = function()
@@ -34,15 +34,12 @@ function subscriptions(state)
 	}
 	
 	// TODO: Handle errors
-	Meteor.subscribe("tport_users", ready);
-	Meteor.subscribe("tport_sessions", ready);
 	Meteor.subscribe("onlineUsers", room, ready);
 	Meteor.subscribe("sharedObjects", room, ready);
 }
 
 function finalize(state)
 {
-	Teleport.user();
 	Teleport.session();
 	
 	state.resolve();
