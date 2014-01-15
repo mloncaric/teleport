@@ -7,6 +7,8 @@ Room = function(data)
 	this.instantSession = data.instantSession;
 	this.mode = data.mode;
 	
+	this.opentokId = data.opentokId;
+	
 	this.ownerId = data.ownerId;
 	this.owner = Users.findOne({id: data.ownerId});
 	
