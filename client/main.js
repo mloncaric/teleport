@@ -80,7 +80,7 @@ Teleport.defineViews = function(views)
 
 addEventListener("message", messageHandler, false);
 
-var timeoutId = setTimeout(kickoff, 2000);
+var timeoutId = 0;
 
 Teleport.kickoff = function()
 {
@@ -111,3 +111,8 @@ function messageHandler(event)
 	
 	kickoff();
 }
+
+Meteor.startup(function()
+{
+	timeoutId = setTimeout(kickoff, 2000);
+});
