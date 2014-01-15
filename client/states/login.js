@@ -1,6 +1,6 @@
 login = function()
 {
-	var states = [fetchUser];
+	var states = [fetchUser, updateUser];
 	
 	if(definedStates.login)
 		states.push(definedStates.login);
@@ -30,11 +30,34 @@ function fetchUser(state)
 		else
 		{
 			if(result)
-				state.resolve({user: result});
+				state.resolve({fetchedUser: result});
 			else
 				state.resolve();
 		}
 	});
+}
+
+// TODO: Move to server
+function updateUser(state)
+{
+	if(!Teleport.context.fetchUserSkipped)
+	{
+		var currentUser = Teleport.user(),
+			fetchedUser = Teleport.context.fetchedUser;
+		
+		delete Teleport.context.fetchedUser;
+		
+		if(currentUser)
+		{
+			if(!fetchedUser && !currentUser.anonymous)
+				Teleport.context.user = null;
+		}
+		
+		if(fetchedUser)
+			Teleport.context.user = fetchedUser;
+	}
+	
+	state.resolve();
 }
 
 function loggingIn(state)
