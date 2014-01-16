@@ -1,11 +1,31 @@
 initialize = function()
 {
-	var states = [loginAnonymously, subscriptions, processSession];
+	var states = [logout, loginAnonymously, subscriptions, processSession];
 	
 	if(definedStates.initialize)
 		states.unshift(definedStates.initialize);
 	
 	Teleport.queue(states).done(login);
+}
+
+function logout(state)
+{
+	var user = Meteor.user();
+	
+	if(!user || _.isNumber(user.profile))
+	{
+		state.resolve();
+		
+		return;
+	}
+	
+	Meteor.logout(function(error)
+	{
+		if(!error)
+			state.resolve();
+		else
+			state.reject(error);
+	}
 }
 
 function loginAnonymously(state)
