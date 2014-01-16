@@ -25,7 +25,7 @@ function logout(state)
 			state.resolve();
 		else
 			state.reject(error);
-	}
+	});
 }
 
 function loginAnonymously(state)
