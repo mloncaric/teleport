@@ -1,6 +1,8 @@
 Teleport.user = function(reactive)
 {
-	var user = Users.findOne({id: Meteor.user().profile}, {reactive: reactive});
+	var meteorUser = Meteor.user();
+	
+	var user = Users.findOne({id: meteorUser ? meteorUser.profile : undefined}, {reactive: reactive});
 	
 	if(user)
 		Teleport.context.user = user;
@@ -10,9 +12,8 @@ Teleport.user = function(reactive)
 
 Teleport.onlineUsers = function(reactive)
 {
-	return OnlineUsers.find({}, {reactive: reactive}).map(function(user)
-	{
-		return _.extend(user, Users.findOne({id: user.id}, {reactive: reactive}));
+	return OnlineUsers.find({}, {reactive: reactive}).map(function(item) {
+		return _.extend(item, _.omit(Users.findOne({id: item.id}, {reactive: reactive}), "_id"));
 	});
 }
 

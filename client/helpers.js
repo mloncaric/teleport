@@ -1,12 +1,9 @@
 // TODO: Add support for named outlets, that way user can control where to show a template
-Handlebars.registerHelper("outlet", function()
+Handlebars.registerHelper("outlet", function(name, options)
 {
-	var templateName = Session.get("tport-view");
+	var outlet = Teleport.getOutlet(_.isString(name) ? name : null);
 	
-	if(!(templateName in Template))
-		return;
-	
-	return new Handlebars.SafeString(Spark.isolate(Template[templateName]));
+	return outlet.render();
 });
 
 Handlebars.registerHelper("moment", function(value, format)

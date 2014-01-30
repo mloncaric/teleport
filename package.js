@@ -41,7 +41,7 @@ Npm.depends({
 
 Package.on_use(function(api)
 {
-	api.use(["handlebars", "jquery", "templating"], ["client"]);
+	api.use(["handlebars", "jquery", "templating", "reactive-dict"], ["client"]);
 	api.use(["underscore", "accounts-base", "deps", "streams", "raven", "uri-js", "momentjs", "ejson"], ["client", "server"]);
 	api.use(["http", "webapp", "connect"], "server");
 	

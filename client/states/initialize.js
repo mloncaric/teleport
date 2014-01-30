@@ -50,20 +50,17 @@ function loginAnonymously(state)
 
 function subscriptions(state)
 {
-	var subscriptionsCount = 2,
-		subscriptionsReady = 0;
+	var handles = [
+		Meteor.subscribe("tport_users"),
+		Meteor.subscribe("tport_sessions")
+	];
 	
-	var ready = function()
-	{
-		if(++subscriptionsReady < subscriptionsCount)
+	Deps.autorun(function() {
+		if(!_.every(_.map(handles, function(handle) { return handle.ready(); })))
 			return;
 		
 		state.resolve();
-	}
-	
-	// TODO: Handle errors
-	Meteor.subscribe("tport_users", ready);
-	Meteor.subscribe("tport_sessions", ready);
+	});
 }
 
 function processSession(state)

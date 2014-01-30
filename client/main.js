@@ -2,24 +2,27 @@
 if(!location.origin)
 	location.origin = location.protocol + "//" + location.hostname;
 
-var currentView = null;
-
-Teleport.setView = function(view)
+Teleport.setView = function(view, outletName)
 {
 	if(!view)
 		return;
 	
-	if(currentView)
-	{
-		if(view.template == currentView.template)
-			return;
-		
-		currentView.hide();
-	}
+	var outlet = Teleport.getOutlet(outletName);
 	
-	currentView = view;
+	outlet.setView(view);
+}
+
+var outlets = {};
+Teleport.getOutlet = function(name)
+{
+	name = name || "_";
 	
-	Session.set("tport-view", view.template);
+	var outlet = outlets[name];
+	
+	if(outlet)
+		return outlet;
+	
+	return outlets[name] = new Outlet(name);
 }
 
 Teleport.setState = function(state)
@@ -48,7 +51,7 @@ Teleport.call = function(name)
 	, teleportDomain: Teleport.context.teleportDomain
 	};
 	
-    return Meteor.apply("methodWithContext", [context, name, args], callback);
+    return Meteor.apply("methodWithContext", [context, name, args], Meteor.bindEnvironment(callback, function() { console.log("bindEnvironment error", arguments); }));
 }
 
 Teleport.context =
@@ -106,6 +109,7 @@ function messageHandler(event)
 	
 	clearTimeout(timeoutId);
 	
+	Teleport.context.tool = data.tool;
 	Teleport.context.teleportDomain = data.teleportDomain;
 	Teleport.context.user = data.user;
 	

@@ -21,21 +21,19 @@ function fetchSession(state)
 
 function subscriptions(state)
 {
-	var room = Teleport.context.room,
-		subscriptionsCount = 2,
-		subscriptionsReady = 0;
+	var room = Teleport.context.room;
 	
-	var ready = function()
-	{
-		if(++subscriptionsReady < subscriptionsCount)
+	var handles = [
+		Meteor.subscribe("onlineUsers", room),
+		Meteor.subscribe("sharedObjects", room)
+	];
+	
+	Deps.autorun(function() {
+		if(!_.every(_.map(handles, function(handle) { return handle.ready(); })))
 			return;
 		
 		state.resolve();
-	}
-	
-	// TODO: Handle errors
-	Meteor.subscribe("onlineUsers", room, ready);
-	Meteor.subscribe("sharedObjects", room, ready);
+	});
 }
 
 function updateSession(state)

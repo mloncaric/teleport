@@ -25,28 +25,36 @@ Teleport.View = function(template, options)
 
 Teleport.View.prototype.show = function()
 {
-	if(this.visible)
-		return;
-	
-	this.visible = true;
-	
-	if(_.isFunction(this.options.subscriptions))
-		this.subscriptionsComputation = Deps.autorun(_.bind(this.options.subscriptions, this));
-	
-	var sharedObjects = this.options.sharedObjects;
-	if(sharedObjects)
+	if(!this.visible)
 	{
-		if(_.isFunction(sharedObjects))
-			this.options.sharedObjects = sharedObjects = sharedObjects.call(this.context);
+		this.visible = true;
 		
-		_.each(sharedObjects, function(sharedObject)
+		if(_.isFunction(this.options.subscriptions))
+			//this.options.subscriptions.call(this.context);
+			this.subscriptionsComputation = Deps.autorun(_.bind(this.options.subscriptions, this.context));
+		
+		var sharedObjects = this.options.sharedObjects;
+		if(sharedObjects)
 		{
-			sharedObject.activate();
-		});
+			if(_.isFunction(sharedObjects))
+				this.options.sharedObjects = sharedObjects = sharedObjects.call(this.context);
+			
+			_.each(sharedObjects, function(sharedObject)
+			{
+				sharedObject.activate();
+			});
+		}
+		
+		console.log(this.template, "show");
+		
+		if(_.isFunction(this.options.show))
+			this.options.show.call(this.context);
 	}
 	
-	if(_.isFunction(this.options.show))
-		this.options.show.call(this.context);
+	console.log(this.template, "rendered");
+	
+	if(_.isFunction(this.options.rendered))
+		this.options.rendered.call(this.context);
 }
 
 Teleport.View.prototype.hide = function()
@@ -55,6 +63,8 @@ Teleport.View.prototype.hide = function()
 		return;
 	
 	this.visible = false;
+	
+	console.log(this.template, "hide");
 	
 	if(_.isFunction(this.options.hide))
 		this.options.hide.call(this.context);
@@ -69,4 +79,24 @@ Teleport.View.prototype.hide = function()
 	{
 		sharedObject.deactivate();
 	});
+}
+
+Teleport.View.prototype.get = function(key)
+{
+	return this.context[key];
+}
+
+Teleport.View.prototype.set = function(key, value)
+{
+	return this.context[key] = value;
+}
+
+Teleport.View.prototype.call = function(methodName)
+{
+	var method = this.context[methodName];
+	
+	if(!_.isFunction(method))
+		return;
+	
+	return method.apply(this.context, Array.prototype.slice.call(arguments, 1));
 }
