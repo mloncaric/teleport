@@ -25,6 +25,7 @@ Teleport.getOutlet = function(name)
 	return outlets[name] = new Outlet(name);
 }
 
+// TODO: Use autorun and deps
 Teleport.setState = function(state)
 {
 	if(state in states)

@@ -1,11 +1,25 @@
 initialize = function()
 {
-	var states = [logout, loginAnonymously, subscriptions, processSession];
+	var states = [wait, logout, loginAnonymously, subscriptions, processSession];
 	
 	if(definedStates.initialize)
 		states.unshift(definedStates.initialize);
 	
 	Teleport.queue(states).done(login);
+}
+
+function wait(state)
+{
+	Teleport.setView(definedViews.loading);
+	
+	Deps.autorun(function(computation) {
+		if(Meteor.loggingIn())
+			return;
+		
+		//computation.stop();
+		
+		state.resolve();
+	});
 }
 
 function logout(state)
@@ -18,6 +32,8 @@ function logout(state)
 		
 		return;
 	}
+	
+	Teleport.setView(definedViews.loading);
 	
 	Meteor.logout(function(error)
 	{
@@ -55,9 +71,11 @@ function subscriptions(state)
 		Meteor.subscribe("tport_sessions")
 	];
 	
-	Deps.autorun(function() {
+	Deps.autorun(function(computation) {
 		if(!_.every(_.map(handles, function(handle) { return handle.ready(); })))
 			return;
+		
+		//computation.stop();
 		
 		state.resolve();
 	});
