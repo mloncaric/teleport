@@ -213,6 +213,7 @@ function updateSession(data, room)
 	, status: data.status_name
 	, shortLink: data.short_link
 	, instantSession: data.type == "instant session"
+	, accessNumber: data.access_number
 	, participants: _.map(data.participants, function(user) { return user.id; })
 	, maxParticipants: data.max_participants
 	, createdAt: new Date(data.created_at)

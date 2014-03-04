@@ -6,6 +6,7 @@ Room = function(data, reactive)
 	this.shortLink = data.shortLink;
 	this.instantSession = data.instantSession;
 	this.mode = data.mode;
+	this.accessNumber = data.accessNumber;
 	
 	this.opentokId = data.opentokId;
 	
