@@ -28,6 +28,17 @@ Teleport.session = function(reactive)
 	return Teleport.context.session;
 }
 
+Teleport.owner = function(reactive)
+{
+	var user = Teleport.user(reactive),
+		session = Teleport.session(reactive);
+	
+	if(!user || !session)
+		return null;
+	
+	return user.id == session.ownerId;
+}
+
 Teleport.setRoom = function(value)
 {
 	if(!value)

@@ -126,30 +126,29 @@ Outlet.prototype.render = function()
 {
 	var views = this.dict.get("views") || [];
 	
-	if(_.isEqual(this.views, views))
-		return this.cache ? new Handlebars.SafeString(this.cache) : undefined;
+	/*if(_.isEqual(this.views, views))
+		return this.cache ? new Handlebars.SafeString(this.cache) : undefined;*/
 	
 	this.views = views;
 	
 	console.log("render", this.name, views);
 	
-	var options = {
-		fn: function(view) {
-			return Spark.createLandmark({constant: true}, function() {
-				return Template[view]();
-			});
-			
-			return Spark.isolate(Template[view]);
-		},
-		inverse: function() {
-			return "";
-		}
-	};
-	
-	return new Handlebars.SafeString(this.cache = Handlebars._default_helpers.each(views, options));
-	
-	return new Handlebars.SafeString(this.cache = Spark.createLandmark({constant: true}, function() {
-		return Handlebars._default_helpers.each(views, options);
-	}));
+	return _.map(views, function(view) {
+		return Template[view];
+	});
 }
 
+var OutletComponent = UI.Component.extend({
+	kind: "Outlet",
+	
+	render: function() {
+		
+		var name = this.get();
+		
+		var outlet = Teleport.getOutlet(_.isString(name) ? name : null);
+		
+		return outlet.render.bind(outlet);
+	}
+});
+
+Template.outlet = OutletComponent;
