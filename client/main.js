@@ -52,7 +52,7 @@ Teleport.call = function(name)
 	, teleportDomain: Teleport.context.teleportDomain
 	};
 	
-    return Meteor.apply("methodWithContext", [context, name, args], Meteor.bindEnvironment(callback, function() { console.log("bindEnvironment error", arguments); }));
+    return Meteor.apply("methodWithContext", [context, name, args], callback);
 }
 
 Teleport.context =
