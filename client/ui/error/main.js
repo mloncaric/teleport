@@ -3,17 +3,13 @@ error = function(retry)
 {
 	_retry = retry;
 	
-	Teleport.setView(errorView);
+	Teleport.setTemplate("default_error");
 }
 
-var errorView = new Teleport.View("default_error", {
+Template.default_error = Template.default_error.extend({
 	events: {
-		"click button": tryAgain
+		"click button": function() {
+			_retry();
+		}
 	}
 });
-
-// Event handlers
-function tryAgain()
-{
-	_retry();
-}

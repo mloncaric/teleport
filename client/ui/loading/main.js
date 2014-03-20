@@ -1,1 +1,0 @@
-loadingView = new Teleport.View("default_loading");

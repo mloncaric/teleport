@@ -21,7 +21,7 @@ function fetchUser(state)
 		return;
 	}
 	
-	Teleport.setView(definedViews.loading);
+	Teleport.setTemplate(definedViews.loading);
 	
 	Teleport.call("fetchUser", context.authToken, function(error, result)
 	{
@@ -64,7 +64,7 @@ function loggingIn(state)
 {
 	var context = Teleport.context;
 	
-	Teleport.setView(definedViews.loading);
+	Teleport.setTemplate(definedViews.loading);
 	
 	if(context.user)
 	{

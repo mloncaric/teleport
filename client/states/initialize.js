@@ -1,96 +1,49 @@
 initialize = function()
 {
-	var states = [wait, logout, loginAnonymously, subscriptions, processSession];
+	var states = [trackUser];
 	
 	if(definedStates.initialize)
 		states.unshift(definedStates.initialize);
 	
-	Teleport.queue(states).done(login);
+	Teleport.queue(states).done(application);
 }
 
-function wait(state)
+function trackUser(state)
 {
-	Teleport.setView(definedViews.loading);
+	Teleport.setTemplate(definedViews.loading);
 	
-	Deps.autorun(function(computation) {
-		if(Meteor.loggingIn())
-			return;
+	var stream = Meteor.connection._stream;
+	/*stream.CONNECT_TIMEOUT = 5000;
+	stream.RETRY_EXPONENT = 1;
+	stream.RETRY_MAX_TIMEOUT = 30000;*/
+	
+	stream.on("message", function(message)
+	{
+		message = JSON.parse(message);
 		
-		//computation.stop();
-		
-		state.resolve();
+		if(message.msg == "connected")
+			_trackUser(message.session);
 	});
+	
+	return _trackUser(Meteor.connection._lastSessionId);
 }
 
-function logout(state)
+function _trackUser(clientId)
 {
-	var user = Meteor.user();
+	var deferred = jQuery.Deferred();
 	
-	if(!user || _.isNumber(user.profile))
+	Teleport.call("trackUser", clientId, function(error, result)
 	{
-		state.resolve();
-		
-		return;
-	}
-	
-	Teleport.setView(definedViews.loading);
-	
-	Meteor.logout(function(error)
-	{
-		if(!error)
-			state.resolve();
+		if(!error && result)
+			deferred.resolve();
 		else
-			state.reject(error);
+			deferred.reject(error);
 	});
-}
-
-function loginAnonymously(state)
-{
-	if(Meteor.user())
-		state.resolve();
-	else
-	{
-		Teleport.setView(definedViews.loading);
-		
-		Accounts.callLoginMethod(
-		{ methodArguments: [{}]
-		, userCallback: function(error)
-		{
-			if(!error)
-				state.resolve();
-			else
-				state.reject(error);
-		}});
-	}
-}
-
-function subscriptions(state)
-{
-	var handles = [
-		Meteor.subscribe("tport_users"),
-		Meteor.subscribe("tport_sessions")
-	];
 	
-	Deps.autorun(function(computation) {
-		if(!_.every(_.map(handles, function(handle) { return handle.ready(); })))
-			return;
-		
-		//computation.stop();
-		
-		state.resolve();
-	});
+	return deferred.promise();
 }
 
-function processSession(state)
+pingStream.on("ping", function(data)
 {
-	var context = Teleport.context;
-	
-	if(!context.room)
-		state.resolve();
-	else
-	{
-		Teleport.setView(definedViews.loading);
-		
-		return fetchSessionAndSubscribe(state);
-	}
-}
+	pingStream.emit("pong", data);
+});

@@ -12,7 +12,7 @@ function fetchSession(state)
 			if(result)
 				state.resolve(result);
 			else
-				Teleport.setView(definedViews.notFound);
+				Teleport.setTemplate(definedViews.notFound);
 		}
 		else
 			state.reject(error);

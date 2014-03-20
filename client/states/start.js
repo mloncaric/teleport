@@ -5,7 +5,7 @@ start = function()
 	if(definedStates.start)
 		states.unshift(definedStates.start);
 	
-	Teleport.queue(states).done(application);
+	Teleport.queue(states).done(initialize);
 }
 
 function scheduling(state)
@@ -17,7 +17,7 @@ function scheduling(state)
 		return;
 	}
 	
-	Teleport.setView(definedViews.scheduling);
+	Teleport.setTemplate(definedViews.scheduling);
 	
 	return Teleport.queue(
 	[ createSession

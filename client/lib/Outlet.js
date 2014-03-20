@@ -3,152 +3,85 @@ Outlet = function(name)
 	this.name = name || "";
 	
 	this.dict = new ReactiveDict;
-	this.views = [];
-	this.viewMap = {};
 	
-	this.defaultView = null;
+	this.defaultTemplate = null;
 }
 
 Outlet.prototype.isEmpty = function()
 {
-	var views = this.dict.get("views");
-	
-	return !views || !views.length;
+	return !_.size(this.dict.get("templates"));
 }
 
-Outlet.prototype.hasView = function(view)
+Outlet.prototype.hasTemplate = function(template)
 {
-	var views = this.dict.get("views");
-	
-	return views && views.indexOf(view.template) > -1;
+	return _.contains(this.dict.get("templates"), template);
 }
 
-Outlet.prototype.setDefaultView = function(view)
+Outlet.prototype.setDefaultTemplate = function(template)
 {
-	var defaultView = this.defaultView;
+	var defaultTemplate = this.defaultTemplate;
 	
-	if(defaultView)
+	if(defaultTemplate)
 	{
-		if(view && view.template && defaultView.template)
+		if(template == defaultTemplate)
 			return;
 		
-		this.defaultView = null;
+		this.defaultTemplate = null;
 		
-		this.removeView(defaultView);
+		this.removeTemplate(defaultTemplate);
 	}
 	
-	this.defaultView = view;
+	this.defaultTemplate = template;
 	
-	if(view && this.isEmpty())
-		this.setView(view);
+	if(this.isEmpty())
+		this.setTemplate(template);
 }
 
-Outlet.prototype.setViews = function(views)
+Outlet.prototype.setTemplates = function(templates)
 {
-	if(this.defaultView && _.isEmpty(views))
-		views = [this.defaultView];
-	
-	var viewKeys = _.map(views, function(view) {
-		return view.template;
-	});
-	
-	_.each(this.viewMap, function(view, key) {
-		if(viewKeys.indexOf(key) > -1)
-			return;
-		
-		view.hide();
-	});
-	
-	this.viewMap = _.object(_.map(views, function(view) {
-		return [
-			view.template,
-			view
-		];
-	}));
-	
-	this.dict.set("views", viewKeys);
+	if(_.isEmpty(templates))
+		this.setTemplate(null);
+	else
+		this.dict.set("templates", templates);
 }
 
-Outlet.prototype.setView = function(view)
+Outlet.prototype.setTemplate = function(template)
 {
-	if(this.defaultView && !view)
-		view = this.defaultView;
+	if(this.defaultTemplate && !template)
+		template = this.defaultTemplate;
 	
-	if(view)
-		delete this.viewMap[view.template];
-	
-	_.each(this.viewMap, function(view) {
-		view.hide();
-	});
-	
-	this.viewMap = {};
-	
-	if(view)
-		this.viewMap[view.template] = view;
-	
-	this.dict.set("views", view ? [view.template] : null);
+	this.dict.set("templates", template ? [template] : null);
 }
 
-Outlet.prototype.addView = function(view)
+Outlet.prototype.addTemplate = function(template)
 {
-	var views = this.dict.get("views") || [];
+	var templates = this.dict.get("templates") || [];
 	
-	if(views.indexOf(view.template) > -1)
+	if(_.contains(templates, template))
 		return;
 	
-	this.viewMap[view.template] = view;
+	templates.push(template);
 	
-	views.push(view.template);
-	
-	this.dict.set("views", views);
+	this.dict.set("templates", templates);
 }
 
-Outlet.prototype.removeView = function(view)
+Outlet.prototype.removeTemplate = function(template)
 {
-	var views = this.dict.get("views") || [];
+	var templates = this.dict.get("templates") || [];
 	
-	if(!views || views.indexOf(view.template) < 0)
+	if(!_.contains(templates, template))
 		return;
 	
-	view.hide();
+	templates.splice(_.indexOf(templates, template), 1);
 	
-	delete this.viewMap[view.template];
-	
-	views.splice(views.indexOf(view.template), 1);
-	
-	if(this.defaultView && _.isEmpty(views))
-		views = [this.defaultView.template];
-	
-	this.dict.set("views", views);
+	this.setTemplates(templates);
 }
 
 Outlet.prototype.render = function()
 {
-	var views = this.dict.get("views") || [];
+	var templates = this.dict.get("templates") || [];
 	
-	/*if(_.isEqual(this.views, views))
-		return this.cache ? new Handlebars.SafeString(this.cache) : undefined;*/
+	console.log("render", this.name, templates);
 	
-	this.views = views;
-	
-	console.log("render", this.name, views);
-	
-	return _.map(views, function(view) {
-		return Template[view];
-	});
+	return templates;
 }
-
-var OutletComponent = UI.Component.extend({
-	kind: "Outlet",
-	
-	render: function() {
-		
-		var name = this.get();
-		
-		var outlet = Teleport.getOutlet(_.isString(name) ? name : null);
-		
-		return outlet.render.bind(outlet);
-	}
-});
-
-Template.outlet = OutletComponent;

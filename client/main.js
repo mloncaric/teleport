@@ -2,14 +2,14 @@
 if(!location.origin)
 	location.origin = location.protocol + "//" + location.hostname;
 
-Teleport.setView = function(view, outletName)
+Teleport.setTemplate = function(template, outletName)
 {
-	if(!view)
+	if(!template)
 		return;
 	
 	var outlet = Teleport.getOutlet(outletName);
 	
-	outlet.setView(view);
+	outlet.setTemplate(template);
 }
 
 var outlets = {};
@@ -33,9 +33,10 @@ Teleport.setState = function(state)
 }
 
 var states =
-{ initialize: initialize
+{ boot: boot
 , login: login
 , start: start
+, initialize: initialize
 , application: application
 };
 
@@ -71,10 +72,10 @@ Teleport.defineStates = function(states)
 }
 
 definedViews =
-{ loading: loadingView
-, notFound: notFoundView
-, scheduling: schedulingView
-, application: applicationView
+{ loading: "default_loading"
+, notFound: "default_notFound"
+, scheduling: "default_scheduling"
+, application: "default_application"
 };
 
 Teleport.defineViews = function(views)
@@ -97,7 +98,7 @@ function kickoff()
 {
 	removeEventListener("message", messageHandler, false);
 	
-	Teleport.setState("initialize");
+	Teleport.setState("boot");
 }
 
 // Event handlers
