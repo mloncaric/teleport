@@ -29,9 +29,10 @@ WebApp.addHtmlAttributeHook(function(request)
 
 Accounts.registerLoginHandler(function(options)
 {
-	// TODO: Check
-	options.generateLoginToken = true;                                                                           // 552
-    return Accounts.insertUserDoc(options, {});
+	return {
+		type: "teleport",
+		userId: Accounts.insertUserDoc(options, {})
+	};
 });
 
 /*Meteor.onConnection(function(connection)
