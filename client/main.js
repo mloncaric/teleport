@@ -1,6 +1,38 @@
-// IE...
-if(!location.origin)
-	location.origin = location.protocol + "//" + location.hostname;
+/*Router.configure({
+	autoRender: false
+});
+
+Router.map(function()
+{
+	this.route("readOnly", {
+		path: "/:room/read-only",
+		
+		action: function() {
+			console.log("route readOnlyApp action");
+			
+			Teleport.context.readOnly = true;
+			Teleport.context.room = this.params.room;
+		}
+	});
+	
+	this.route("room", {
+		path: "/:room/",
+		
+		action: function() {
+			console.log("route room action");
+			
+			Teleport.context.room = this.params.room;
+		}
+	});
+	
+	this.route("application", {
+		path: "*",
+		
+		action: function() {
+			console.log("route application action");
+		}
+	});
+});*/
 
 Teleport.setTemplate = function(template, outletName)
 {
@@ -112,6 +144,7 @@ function messageHandler(event)
 	clearTimeout(timeoutId);
 	
 	Teleport.context.tool = data.tool;
+	Teleport.context.readOnly = data.readOnly;
 	Teleport.context.teleportDomain = data.teleportDomain;
 	Teleport.context.user = data.user;
 	

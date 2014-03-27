@@ -12,6 +12,13 @@ function trackUser(state)
 {
 	Teleport.setTemplate(definedViews.loading);
 	
+	if(Teleport.context.readOnly)
+	{
+		state.resolve();
+		
+		return;
+	}
+	
 	var stream = Meteor.connection._stream;
 	/*stream.CONNECT_TIMEOUT = 5000;
 	stream.RETRY_EXPONENT = 1;
