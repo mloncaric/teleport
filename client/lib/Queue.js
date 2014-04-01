@@ -27,7 +27,7 @@ Queue.prototype.start = function()
 	.done(this.status.resolve)
 	.fail(function(error)
 	{
-		definedStates.error(self.start.bind(self));
+		definedStates.error(self.start.bind(self), error);
 	});
 }
 
