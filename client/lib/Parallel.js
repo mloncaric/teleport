@@ -1,9 +1,11 @@
 Teleport.parallel = function(methods)
 {
 	return function(state) {
-		var methodsExecuted = 0,
-			methodsCount = 4,
-			context = {};
+		var context = {};
+		
+		var resolver = _.after(methods.length, function() {
+			state.resolve(context);
+		});
 
 		_.each(methods, function(method) {
 			wrap(method)
@@ -11,8 +13,7 @@ Teleport.parallel = function(methods)
 				if(data)
 					context = $.extend(true, context, data);
 
-				if(++methodsExecuted == methodsCount)
-					state.resolve(context);
+				resolver();
 			})
 			.fail(state.reject);
 		});
