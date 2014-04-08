@@ -28,7 +28,7 @@ UI.registerHelper("room", function()
 
 UI.registerHelper("user", function()
 {
-	return Teleport.user(true);
+	return Teleport.user(true, true);
 });
 
 UI.registerHelper("session", function()

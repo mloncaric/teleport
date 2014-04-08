@@ -1,11 +1,16 @@
-Teleport.user = function(reactive)
+Teleport.user = function(reactive, skipCache)
 {
 	var meteorUser = Meteor.user();
 	
 	var user = Users.findOne({id: meteorUser ? meteorUser.profile : undefined}, {reactive: reactive});
 	
 	if(user)
+	{
+		if(skipCache)
+			return user;
+		
 		Teleport.context.user = user;
+	}
 	
 	return Teleport.context.user;
 }
